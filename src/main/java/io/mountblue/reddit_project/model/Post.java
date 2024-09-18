@@ -30,7 +30,10 @@ public class Post {
 
     @Lob
     @Column(name = "image")
-    private byte[] image;  // Field to store image data
+    private byte[] image;
+
+    @Transient
+    private String relativeTime;
 
     public Long getPostId() {
         return postId;
@@ -86,5 +89,13 @@ public class Post {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public String getRelativeTime() {
+        return relativeTime;
+    }
+
+    public void setRelativeTime(String relativeTime) {
+        this.relativeTime = relativeTime;
     }
 }

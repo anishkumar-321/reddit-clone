@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class SubRedditController {
@@ -27,6 +29,12 @@ public class SubRedditController {
     public String subRedditPageView(Model model){
         model.addAttribute("subReddit",new SubReddit());
         List<Post> posts= postService.getAllPosts();
+        List<Post> postsWithRelativeTime = posts.stream()
+                .map(post -> {
+                    post.setRelativeTime(calculateRelativeTime(post.getCreatedAt()));
+                    return post;
+                })
+                .collect(Collectors.toList());
         model.addAttribute("posts",posts);
         model.addAttribute("subReddits",subRedditService.getAllSubReddits());
         model.addAttribute("subRedditNamesList",subRedditService.getAllSubRedditsByName());
@@ -46,4 +54,26 @@ public class SubRedditController {
         subRedditService.createSubReddit(subReddit);
         return "redirect:/sub";
     }
+    private String calculateRelativeTime(LocalDateTime createdAt) {
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(createdAt, now);
+
+        if (duration.toMinutes() < 1) {
+            return "Just now";
+        } else if (duration.toMinutes() < 60) {
+            return duration.toMinutes() + " minutes ago";
+        } else if (duration.toHours() < 24) {
+            return duration.toHours() + " hours ago";
+        } else if (duration.toDays() == 1) {
+            return "Yesterday";
+        } else if (duration.toDays() < 30) {
+            return duration.toDays() + " days ago";
+        } else if (duration.toDays() < 365) {
+            return (duration.toDays() / 30) + " months ago";
+        } else {
+            return (duration.toDays() / 365) + " years ago";
+        }
+    }
+
+
 }
