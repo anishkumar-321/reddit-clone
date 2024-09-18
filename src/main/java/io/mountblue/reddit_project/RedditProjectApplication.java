@@ -9,7 +9,7 @@ public class RedditProjectApplication {
     public static void main(String[] args) {
 
         SpringApplication.run(RedditProjectApplication.class, args);
-        System.out.println("I am Anish!");
+        System.out.println("I am sdas!");
     }
 
 }
