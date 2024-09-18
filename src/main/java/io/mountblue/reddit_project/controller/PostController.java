@@ -26,4 +26,27 @@ public class PostController {
         model.addAttribute("subRedditList", subRedditList);
         return "create-post";
     }
+    @PostMapping("/createFirstPart")
+    public String savePost(@RequestParam("title") String title,
+                           @RequestParam("body") String body,
+                           @RequestParam("subRedditName") String subRedditName,
+                           @RequestParam("image") MultipartFile imageFile,
+                           Model model) throws IOException {
+        System.out.println(subRedditName);
+        Post post = new Post();
+        post.setTitle(title);
+        SubReddit subReddit = subRedditService.getSubReddit(subRedditName);
+        System.out.println(subReddit);
+        post.setSubReddit(subReddit);
+        System.out.println(post.getSubReddit());
+        post.setBody(body);
+
+        if (!imageFile.isEmpty()) {
+            post.setImage(imageFile.getBytes());
+        }
+
+        post.setCreatedAt(LocalDateTime.now());
+        postService.saveCreatePost(post);
+        return "redirect:/sub";
+    }
 }
