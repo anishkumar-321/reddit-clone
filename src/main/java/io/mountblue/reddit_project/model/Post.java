@@ -2,6 +2,8 @@ package io.mountblue.reddit_project.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -34,6 +36,17 @@ public class Post {
 
     @Transient
     private String relativeTime;
+
+    @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
+    private List<Comment> comments= new ArrayList<>();
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 
     public Long getPostId() {
         return postId;

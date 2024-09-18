@@ -1,11 +1,23 @@
 package io.mountblue.reddit_project.controller;
 
+import io.mountblue.reddit_project.model.Comment;
+import io.mountblue.reddit_project.model.Post;
+import io.mountblue.reddit_project.model.SubReddit;
+import io.mountblue.reddit_project.service.PostService;
+import io.mountblue.reddit_project.service.SubRedditService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -18,6 +30,35 @@ public class PostController {
     public PostController(PostService postService, SubRedditService subRedditService) {
         this.postService = postService;
         this.subRedditService = subRedditService;
+    }
+
+    @GetMapping("/{id}")
+    public String fullViewPost(@PathVariable Long id , Model model){
+        Post post  =postService.getPostById(id);
+        List<Comment> comments=post.getComments();
+        model.addAttribute("post",post);
+        System.out.println(post.getComments());
+        return "full-post-view";
+    }
+
+    @GetMapping("/{id}/editPost")
+    public String editPost(@PathVariable Long id , Model model){
+        Post post= postService.getPostById(id);
+        model.addAttribute("post",post);
+        return "post-updater";
+    }
+
+    @PostMapping("/{id}/updatePost")
+    public String updatePost(@PathVariable Long id , @RequestParam("title") String title, @RequestParam("body") String body){
+        Post post = postService.getPostById(id);
+        postService.saveUpdatedPost(post,title,body);
+        return "redirect:/posts/"+id;
+    }
+
+    @GetMapping("/{id}/deletePost")
+    public String deletePost(@PathVariable Long id ){
+        postService.deletePostById(id);
+        return "redirect:/sub";
     }
 
     @GetMapping("/new")
@@ -51,7 +92,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}/image")
-    public ResponseEntity<Resource> getPostImage(@PathVariable Long id) {
+    public ResponseEntity<ByteArrayResource> getPostImage(@PathVariable Long id) {
         Post post = postService.getPostById(id);
 
         if (post != null && post.getImage() != null) {
@@ -66,4 +107,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+
 }
