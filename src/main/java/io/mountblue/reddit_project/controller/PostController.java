@@ -49,4 +49,21 @@ public class PostController {
         postService.saveCreatePost(post);
         return "redirect:/sub";
     }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<Resource> getPostImage(@PathVariable Long id) {
+        Post post = postService.getPostById(id);
+
+        if (post != null && post.getImage() != null) {
+            ByteArrayResource resource = new ByteArrayResource(post.getImage());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Default for binary data
+            headers.setContentLength(post.getImage().length);
+
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
