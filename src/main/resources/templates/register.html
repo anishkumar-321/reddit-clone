@@ -63,28 +63,33 @@
            margin-bottom: 8px;
        }
        .password-container {
-           display: flex;
-           align-items: center;
-           position: relative;
-       }
+    position: relative; /* Ensure child elements are positioned relative to this container */
+    margin-bottom: 15px;
+}
 
-       .password-container input[type="password"] {
-           flex: 1;
-           margin-right: 5px; /* Space between input and button */
-       }
+/* Password input styling */
+.password-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
 
-       .password-container button {
-           background: none;
-           border: none;
-           cursor: pointer;
-           position: absolute;
-           right: 0;
-           padding: 10px;
-           margin: 0;
-           background-color: #0079d3;
-           color: #fff;
-           border-radius: 4px;
-       }
+/* Eye icon styling */
+.password-container .toggle-password {
+    position: absolute;
+    right: 10px; /* Adjust as needed */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    background-color: #0079d3; /* Background color of the eye icon */
+    color: #fff; /* Color of the eye icon */
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px; /* Adjust icon size */
+}
 
        input, select {
            padding: 10px;
@@ -134,6 +139,13 @@
               width: 90%;
           }
       }
+        .password-content{
+        display:flex;
+
+        }
+         .password-content i{
+        margin-top :8px;
+        }
     </style>
 </head>
 <body>
@@ -157,16 +169,19 @@
             <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></span>
         </div>
         <div class="password-container">
-            <div><label for="password">Password:</label></div><br>
-            <input type="password" id="password" name="password" th:field="*{password}">
-            <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"></i>
-            <!--<button type="button" onclick="togglePassword()">👁</button>-->
+           <label for="password">Password:</label>
+            <div class="password-content">
+                <input type="password" id="password" name="password" th:field="*{password}">
+                <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"></i>
+            </div>
         </div>
         <div class="password-container">
-            <div><label for="confirmpassword">Confirm Password:</label></div><br>
-            <input type="password" id="confirmpassword" name="confirmpassword">
-            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmpassword')"></i>
-            <span id="passwordError" class="error"></span>
+            <label for="confirmpassword">Confirm Password:</label>
+            <div class="password-content">
+                <input type="password" id="confirmpassword" name="confirmpassword">
+                <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmpassword')"></i>
+                <span id="passwordError" class="error"></span>
+            </div>
         </div>
         <div>
             <label for="gender">Gender:</label>
@@ -183,7 +198,6 @@
             <label for="userInfo">About user :</label>
             <input type="text" id="userInfo" name="userInfo" th:field="*{userInfo}">
         </div>
-
         <input type="submit" value="REGISTER">
     </form>
 </div>
