@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/posts")
@@ -36,8 +37,8 @@ public class PostController {
     public String fullViewPost(@PathVariable Long id , Model model){
         Post post  =postService.getPostById(id);
         List<Comment> comments=post.getComments();
+        post.setRelativeTime(subRedditService.calculateRelativeTime(post.getCreatedAt()));
         model.addAttribute("post",post);
-        System.out.println(post.getComments());
         return "full-post-view";
     }
 
@@ -58,7 +59,7 @@ public class PostController {
     @GetMapping("/{id}/deletePost")
     public String deletePost(@PathVariable Long id ){
         postService.deletePostById(id);
-        return "redirect:/sub";
+        return "redirect:/";
     }
 
     @GetMapping("/new")
@@ -88,7 +89,7 @@ public class PostController {
 
         post.setCreatedAt(LocalDateTime.now());
         postService.saveCreatePost(post);
-        return "redirect:/sub";
+        return "redirect:/";
     }
 
     @GetMapping("/{id}/image")
@@ -107,7 +108,4 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
-
 }
