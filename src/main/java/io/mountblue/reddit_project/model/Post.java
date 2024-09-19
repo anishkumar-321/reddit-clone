@@ -40,6 +40,10 @@ public class Post {
     @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
     private List<Comment> comments= new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name="author")
+    private User user;
+
     public List<Comment> getComments() {
         return comments;
     }
