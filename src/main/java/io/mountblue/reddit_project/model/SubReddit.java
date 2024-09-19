@@ -30,6 +30,10 @@ public class SubReddit {
     @OneToMany(mappedBy = "subReddit", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name="admin")
+    private User user;
+
     public Long getSubRedditId() {
         return subRedditId;
     }

@@ -152,16 +152,15 @@
 <nav class="navbar">
     <div class="navbar-left">
         <img src="/logo/reddit.png" alt="Logo" class="logo">
-        <span class="site-name">Reddit</span>
     </div>
 </nav>
 <div class="container">
 <h2>Register Form</h2>
-    <form th:action="@{/register}" th:object="${userRegistrationInfo}" method="post">
+    <form th:action="@{/user/submit}" th:object="${userRegistrationInfo}" method="post">
         <div>
             <label for="username">Name:</label>
-            <input type="text" id="username" name="username" th:field="*{name}">
-            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></span>
+            <input type="text" id="username" name="username" th:field="*{username}">
+            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red;"></span>
         </div>
         <div>
             <label for="email">Email:</label>
