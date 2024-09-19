@@ -463,6 +463,46 @@
         .view-comment:hover i {
             color: #1e1e1e;
         }
+        .resources-section h3 {
+            color: #1a1a1b;
+            font-size: 18px;
+            padding-bottom: 5px;
+        }
+
+        .resources-section hr {
+            border: 0;
+            height: 1px;
+            background-color: lightgray;
+            margin-bottom: 10px;
+        }
+
+        .resources-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: #1a1a1b;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .resource-link:hover {
+            background-color: #e5e5e5;
+        }
+
+        .resource-link i {
+            margin-right: 8px;
+            font-size: 20px;
+            color: #1a1a1b;
+        }
+
     </style>
 </head>
 <body>
@@ -491,7 +531,7 @@
 <div class="sidebar">
     <div class="left-div">
         <a href="/feed/all" class="sidebar-link">
-            <button><i class="fas fa-home"></i> Home</button>
+            <button><i class="fas fa-home"></i> My Posts</button>
         </a>
         <a href="/feed/popular" class="sidebar-link">
             <button><i class="fas fa-star"></i> Popular</button>
@@ -502,6 +542,7 @@
     </div>
     <div class="community-list">
         <h3>Communities</h3>
+        <hr>
         <button id="myBtn">
             <i class="fas fa-plus"></i> Create Community
         </button>
@@ -509,6 +550,32 @@
             <li th:each="subReddit : ${subReddits}" class="particular-avatar">
                 <img th:src="${subReddit.avatar}" alt="Avatar" style="width:50%;height: 50px; width: 50px; border-radius: 50%;;object-fit: cover;"/>
                 <span th:text="${subReddit.name}" style="width:50%;">Community Name</span>
+            </li>
+        </ul>
+    </div>
+    <div class="resources-section">
+        <h3>Resources</h3>
+        <hr>
+        <ul class="resources-list">
+            <li>
+                <a href="/about-reddit" class="resource-link">
+                    <i class="fas fa-info-circle"></i> About Reddit
+                </a>
+            </li>
+            <li>
+                <a href="/content-policy" class="resource-link">
+                    <i class="fas fa-file-alt"></i> Content Policy
+                </a>
+            </li>
+            <li>
+                <a href="/privacy-policy" class="resource-link">
+                    <i class="fas fa-user-shield"></i> Privacy Policy
+                </a>
+            </li>
+            <li>
+                <a href="/user-agreement" class="resource-link">
+                    <i class="fas fa-handshake"></i> User Agreement
+                </a>
             </li>
         </ul>
     </div>
