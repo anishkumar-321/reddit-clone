@@ -2,8 +2,12 @@ package io.mountblue.reddit_project.controller;
 
 import io.mountblue.reddit_project.model.Post;
 import io.mountblue.reddit_project.model.SubReddit;
+import io.mountblue.reddit_project.model.User;
 import io.mountblue.reddit_project.service.PostService;
 import io.mountblue.reddit_project.service.SubRedditService;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +51,13 @@ public class ViewController {
                     return post;
                 })
                 .collect(Collectors.toList());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            System.out.println("authenticated");
+            User user = (User) authentication.getPrincipal();
+            model.addAttribute("user", user);
+        }
+
         model.addAttribute("posts",posts);
         model.addAttribute("subReddits",subRedditService.getAllSubReddits());
         model.addAttribute("subRedditNamesList",subRedditService.getAllSubRedditsByName());

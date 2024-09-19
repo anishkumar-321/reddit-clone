@@ -163,46 +163,45 @@
 </nav>
 <div class="container">
 <h2>Register Form</h2>
-    <form th:action="@{/user/submit}" th:object="${userRegistrationInfo}" method="post">
+    <form  id="registerForm" th:action="@{/user/submit}" th:object="${userRegistrationInfo}" method="post">
         <div>
             <label for="username">Name:</label>
-            <input type="text" id="username" name="username" th:field="*{username}">
+            <input type="text" id="username" name="username" th:field="*{username}" required>
             <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red;"></span>
         </div>
         <div>
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" th:field="*{email}">
+            <input type="email" id="email" name="email" th:field="*{email}" required>
             <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></span>
         </div>
         <div class="password-container">
            <label for="password">Password:</label>
             <div class="password-content">
-                <input type="password" id="password" name="password" th:field="*{password}">
+                <input type="password" id="password" name="password" th:field="*{password}" required>
                 <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"></i>
             </div>
         </div>
         <div class="password-container">
             <label for="confirmpassword">Confirm Password:</label>
             <div class="password-content">
-                <input type="password" id="confirmpassword" name="confirmpassword">
+                <input type="password" id="confirmpassword" name="confirmpassword" required>
                 <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmpassword')"></i>
-                <span id="passwordError" class="error"></span>
             </div>
         </div>
         <div>
             <label for="gender">Gender:</label>
-            <select id="gender" name="gender" th:field="*{gender}">
+            <select id="gender" name="gender" th:field="*{gender}" >
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
             </select>
         </div>
         <div>
             <label for="age">Age:</label>
-            <input id="age" type="number" name="age" placeholder="Age" th:field="*{age}">
+            <input id="age" type="number" name="age" placeholder="Age" th:field="*{age}" required>
         </div>
         <div>
             <label for="userInfo">About user :</label>
-            <input type="text" id="userInfo" name="userInfo" th:field="*{userInfo}">
+            <input type="text" id="userInfo" name="userInfo" th:field="*{userInfo}" required>
         </div>
         <input type="submit" value="REGISTER">
     </form>
@@ -223,27 +222,25 @@
         }
     }
 
-     function validatePasswords() {
-            var password = document.getElementById('password').value;
-            var confirmPassword = document.getElementById('confirmpassword').value;
-            var errorSpan = document.getElementById('passwordError');
-            if (password !== confirmPassword) {
-                errorSpan.textContent = 'Passwords do not match';
-                return false;
-            } else {
-                errorSpan.textContent = '';
-                return true;
-            }
-        }
+    function validatePasswords() {
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirmpassword').value;
 
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             if (!validatePasswords()) {
-                event.preventDefault(); // Prevent form submission
+                event.preventDefault();
             }
         });
-
-        document.getElementById('password').addEventListener('input', validatePasswords);
-        document.getElementById('confirmpassword').addEventListener('input', validatePasswords);
+    });
 </script>
+
 </body>
 </html>

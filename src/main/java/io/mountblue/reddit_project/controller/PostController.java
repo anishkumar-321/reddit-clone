@@ -3,6 +3,7 @@ package io.mountblue.reddit_project.controller;
 import io.mountblue.reddit_project.model.Comment;
 import io.mountblue.reddit_project.model.Post;
 import io.mountblue.reddit_project.model.SubReddit;
+import io.mountblue.reddit_project.model.User;
 import io.mountblue.reddit_project.service.PostService;
 import io.mountblue.reddit_project.service.SubRedditService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -78,15 +81,15 @@ public class PostController {
         Post post = new Post();
         post.setTitle(title);
         SubReddit subReddit = subRedditService.getSubReddit(subRedditName);
-        System.out.println(subReddit);
         post.setSubReddit(subReddit);
-        System.out.println(post.getSubReddit());
         post.setBody(body);
 
         if (!imageFile.isEmpty()) {
             post.setImage(imageFile.getBytes());
         }
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        post.setUser(user);
         post.setCreatedAt(LocalDateTime.now());
         postService.saveCreatePost(post);
         return "redirect:/";

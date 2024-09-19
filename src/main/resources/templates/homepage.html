@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"   xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,6 +40,10 @@
         .navbar-left, .navbar-right {
             display: flex;
             align-items: center;
+        }
+        .navbar-right
+        {
+            gap:5px;
         }
 
         .logo {
@@ -278,10 +282,11 @@
         }
         .post-banner {
             display: flex;
-            align-items:center;
+            align-items: center;
             margin-bottom: 12px;
             padding: 8px 0;
             border-bottom: 1px solid #e0e0e0;
+            justify-content: space-between; /* Ensures spacing between elements */
         }
 
         .avatar {
@@ -295,8 +300,8 @@
         .subreddit-details {
             flex: 1;
             display: flex;
-            gap:5px;
-            align-items:center;
+            gap: 5px;
+            align-items: center;
         }
 
         .subreddit-details h3 {
@@ -311,6 +316,26 @@
             font-size: 12px;
             color: #6a6a6a;
         }
+
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details span {
+            font-size: 14px;
+            color: #1e1e1e;
+        }
+
 
         .right-sidebar {
             width: 250px;
@@ -502,7 +527,30 @@
             font-size: 20px;
             color: #1a1a1b;
         }
+        #loginBtn {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
+        #loginBtn:hover {
+            background-color: #c43703;
+        }
+
+
+        .navbar-right .login-link {
+            margin-left: 10px;
+            text-decoration: none;
+        }
+
+        .navbar-right .login-link button {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -518,14 +566,31 @@
         </div>
     </div>
     <div class="navbar-right">
-        <a href="/posts/new" class="create-post-link">
-            <button id="createPostBtn">
-                <div class="icon-circle" style="margin-right:3px;">
-                    <i class="fas fa-plus"></i>
-                </div>
-                Create Post
-            </button>
-        </a>
+        <div sec:authorize="isAuthenticated()">
+            <a href="/posts/new" class="create-post-link" >
+                <button id="createPostBtn">
+                    <div class="icon-circle" style="margin-right:3px;">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    Create Post
+                </button>
+            </a>
+        </div>
+
+
+        <div sec:authorize="isAnonymous()" style="display:flex;align-items:center;justify-content:center;">
+            <a href="/showLoginPage" class="login-link">
+                <button id="loginBtn">
+                    Log In
+                </button>
+            </a>
+        </div>
+    <div sec:authorize="isAuthenticated()" style="display:flex;align-items:center;justify-content:center">
+        <img th:src="${user.avatar}" alt="User Avatar" class="user-avatar" style="height: 50px; width: 50px; border-radius: 50%;object-fit: cover;">
+        <span class="user-name" style="margin-left: 10px; font-size: 15px; color: #333;">
+        <span th:text="${user.username}">Username</span>
+    </span>
+    </div>
     </div>
 </nav>
 <div class="sidebar">
@@ -593,6 +658,10 @@
                     <div class="subreddit-details">
                         <h3 th:text="${post.subReddit.name}">Subreddit Name</h3>
                         <h6 th:text="${post.relativeTime}">Relative Time</h6>
+                    </div>
+                    <div class="user-details">
+                        <img th:src="${post.user.avatar}" alt="User Avatar" class="user-avatar" />
+                        <span th:text="${post.user.username}">Username</span>
                     </div>
                 </div>
                 <h3 th:text="${post.title}">Post Title</h3>
