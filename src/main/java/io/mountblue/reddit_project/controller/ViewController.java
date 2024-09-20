@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import io.mountblue.reddit_project.model.Vote;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import java.util.List;
@@ -76,9 +77,10 @@ public class ViewController {
 
 
     @GetMapping("/")
-    public String subRedditPageView(Model model) {
+    public String subRedditPageView(Model model, @RequestParam (name = "sort", required = false,defaultValue = "new") String sort) {
         model.addAttribute("subReddit", new SubReddit());
-        List<Post> posts = postService.getAllPosts();
+
+        List<Post> posts = postService.getSortedPosts(sort);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
