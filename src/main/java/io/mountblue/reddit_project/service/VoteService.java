@@ -5,10 +5,12 @@ import io.mountblue.reddit_project.model.User;
 import io.mountblue.reddit_project.model.Vote;
 import io.mountblue.reddit_project.repository.PostRepository;
 import io.mountblue.reddit_project.repository.VoteRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class VoteService {
 
    private final VoteRepository voteRepository;
