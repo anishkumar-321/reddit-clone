@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,6 +19,22 @@ public class User implements UserDetails {
 
     @Column(nullable = false,unique = true)
     private String username;
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 
     @Column(nullable = false,unique = true)
     private String email;
@@ -38,6 +55,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy="user",cascade=CascadeType.ALL)
      private List<Vote>votes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Post> posts = new ArrayList<>();
 
     public Long getId() {
         return id;

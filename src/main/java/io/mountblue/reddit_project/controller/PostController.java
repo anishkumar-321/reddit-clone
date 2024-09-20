@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -63,7 +64,10 @@ public class PostController {
                 }
             }
         }
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            model.addAttribute("user", authentication.getPrincipal());
+        }
         model.addAttribute("post", post);
         return "full-post-view";
     }
@@ -130,6 +134,7 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         post.setUser(user);
+        user.getPosts().add(post);
         post.setCreatedAt(LocalDateTime.now());
         postService.saveCreatePost(post);
         return "redirect:/";
@@ -151,4 +156,5 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 }
