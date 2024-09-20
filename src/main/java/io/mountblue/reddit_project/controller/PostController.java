@@ -7,6 +7,7 @@ import io.mountblue.reddit_project.model.User;
 import io.mountblue.reddit_project.service.PostService;
 import io.mountblue.reddit_project.service.SubRedditService;
 import io.mountblue.reddit_project.service.UserService;
+import io.mountblue.reddit_project.model.Vote;
 import io.mountblue.reddit_project.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -43,14 +44,30 @@ public class PostController {
         this.userService = userService;
     }
 
+
     @GetMapping("/{id}")
-    public String fullViewPost(@PathVariable Long id , Model model){
-        Post post  =postService.getPostById(id);
-        List<Comment> comments=post.getComments();
+    public String fullViewPost(@PathVariable Long id, Model model, Principal principal) {
+        Post post = postService.getPostById(id);
+        List<Comment> comments = post.getComments();
         post.setRelativeTime(subRedditService.calculateRelativeTime(post.getCreatedAt()));
-        model.addAttribute("post",post);
+
+        if (principal != null) {
+            User user = userService.getUserByUsername(principal.getName());
+            Vote vote = voteService.getVoteByPostAndUserId(post.getPostId(), user.getId());
+
+            if (vote != null) {
+                if (vote.getVoteType() == 1) {
+                    post.setUserUpvoted(true);
+                } else if (vote.getVoteType() == 0) {
+                    post.setUserDownvoted(true);
+                }
+            }
+        }
+
+        model.addAttribute("post", post);
         return "full-post-view";
     }
+
 
     @GetMapping("/{id}/editPost")
     public String editPost(@PathVariable Long id , Model model){
@@ -73,6 +90,13 @@ public class PostController {
         voteService.voteDecider(postId,userId,voteType);
         return "redirect:/";
     }
+   @PostMapping("/{postId}/voteDeciderInFullPostView")
+    public String voteDeciderForFullPostView(@PathVariable Long postId, @RequestParam("voteType") String voteType, Principal principal){
+        String username = principal.getName();
+        Long userId= userService.getIdByUserName(username);
+        voteService.voteDecider(postId,userId,voteType);
+       return "redirect:/posts/" + postId;
+   }
 
     @GetMapping("/{id}/deletePost")
     public String deletePost(@PathVariable Long id ){
@@ -86,6 +110,7 @@ public class PostController {
         model.addAttribute("subRedditList", subRedditList);
         return "create-post";
     }
+
     @PostMapping("/createFirstPart")
     public String savePost(@RequestParam("title") String title,
                            @RequestParam("body") String body,
