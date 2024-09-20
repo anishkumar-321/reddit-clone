@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import io.mountblue.reddit_project.model.Comment;
 import io.mountblue.reddit_project.service.CommentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/comments")
 @Controller
