@@ -20,6 +20,10 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public Long getIdByUserName(String username){
+        return userRepository.getIdByUserName(username);
+    }
+
     public Set<String> getEmailSet(){
         return userRepository.emailSet();
     }
@@ -37,5 +41,9 @@ public class UserService {
         user.setAvatar(avatarPath);
 
         userRepository.save(user);
+    }
+
+    public User getUserById(Long userId) {
+      return userRepository.getReferenceById(userId);
     }
 }

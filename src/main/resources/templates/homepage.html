@@ -672,11 +672,38 @@
                          alt="Post Image"/>
                 </div>
                 <div class="post-interactions">
-                    <div class="vote-buttons">
-                        <i class="fas fa-caret-up upvote" title="Upvote"></i>
-                        <span class="vote-count">0</span>
-                        <i class="fas fa-caret-down downvote" title="Downvote"></i>
-                    </div>
+
+<!--                    <div class="vote-buttons">-->
+<!--                        <i class="fas fa-caret-up upvote" title="Upvote"></i>-->
+<!--                        <span class="vote-count">0</span>-->
+<!--                        <i class="fas fa-caret-down downvote" title="Downvote"></i>-->
+<!--                    </div>-->
+
+
+                        <div class="vote-buttons">
+                            <!-- Upvote Button -->
+                            <form th:action="@{/posts/{postId}/voteDecider(postId=${post.postId}, voteType='up')}" method="post" style="display: inline;">
+                                <button type="submit" style="background: none; border: none;">
+                                    <i class="fas fa-caret-up upvote"
+                                       th:classappend="${post.userUpvoted} ? 'orange' : ''" title="Upvote"></i>
+                                </button>
+                            </form>
+
+                            <!-- Total Votes -->
+                            <span class="vote-count" th:text="${post.totalVotes}">0</span>
+
+                            <!-- Downvote Button -->
+                            <form th:action="@{/posts/{postId}/voteDecider(postId=${post.postId}, voteType='down')}" method="post" style="display: inline;">
+                                <button type="submit" style="background: none; border: none;">
+                                    <i class="fas fa-caret-down downvote"
+                                       th:classappend="${post.userDownvoted} ? 'blue' : ''" title="Downvote"></i>
+                                </button>
+                            </form>
+                        </div>
+
+
+
+
                     <a th:href="@{/posts/{id}(id=${post.postId})}" class="view-post">View Post</a>
                     <a th:href="@{/posts/{id}(id=${post.postId})}" class="view-comment">
                         <i class="fas fa-comment" title="Comment"></i> comment
