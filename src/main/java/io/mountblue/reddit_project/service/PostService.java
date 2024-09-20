@@ -4,6 +4,7 @@ import io.mountblue.reddit_project.model.Post;
 import io.mountblue.reddit_project.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -36,5 +37,25 @@ public class PostService {
 
     public void deletePostById(Long id) {
         postRepository.deleteById(id);
+    }
+    public List<Post> getSortedPosts(String sort) {
+        List<Post> posts = getAllPosts();
+
+        switch (sort) {
+            case "new":
+                posts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+                break;
+            case "old":
+                posts.sort(Comparator.comparing(Post::getCreatedAt));
+                break;
+            case "top":
+                posts.sort(Comparator.comparing(Post::getTotalVotes).reversed());
+                break;
+            default:
+                // No sorting
+                break;
+        }
+
+        return posts;
     }
 }
