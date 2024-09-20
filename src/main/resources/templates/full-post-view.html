@@ -14,6 +14,13 @@
             padding:0;
         }
 
+       .upvote.orange {
+            color: #ff4500;
+        }
+        .downvote.blue {
+            color: blue;
+        }
+
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -332,12 +339,34 @@
         </a>
     </div>
 </nav>
+
+
 <div class="full-post">
+
     <div class="vote-section">
-        <i class="fas fa-arrow-up vote-icon upvote"></i>
-        <span class="vote-count" >0</span>
-        <i class="fas fa-arrow-down vote-icon downvote"></i>
+
+        <form th:action="@{/posts/{postId}/voteDeciderInFullPostView(postId=${post.postId}, voteType='up')}" method="post">
+            <button type="submit" style="background: none; border: none;">
+                <i class="fas fa-arrow-up vote-icon upvote"
+                   th:classappend="${post.userUpvoted} ? 'orange' : ''"
+                   title="Upvote"></i>
+            </button>
+        </form>
+
+
+        <span class="vote-count" th:text="${post.totalVotes}">0</span>
+
+
+        <form th:action="@{/posts/{postId}/voteDeciderInFullPostView(postId=${post.postId}, voteType='down')}" method="post">
+            <button type="submit" style="background: none; border: none;">
+                <i class="fas fa-arrow-down vote-icon downvote"
+                   th:classappend="${post.userDownvoted} ? 'blue' : ''"
+                   title="Downvote"></i>
+            </button>
+        </form>
     </div>
+
+
     <div class="post-content">
         <div class="post-banner">
             <img th:src="${post.subReddit.avatar}" alt="Subreddit Avatar" class="avatar" />

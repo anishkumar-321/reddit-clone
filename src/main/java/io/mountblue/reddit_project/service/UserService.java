@@ -46,4 +46,8 @@ public class UserService {
     public User getUserById(Long userId) {
       return userRepository.getReferenceById(userId);
     }
+
+    public User getUserByUsername(String name) {
+        return userRepository.getUserByUsername(name);
+    }
 }
