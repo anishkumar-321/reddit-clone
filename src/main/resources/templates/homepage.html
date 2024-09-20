@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"   xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,6 +85,8 @@
             color: #878A8C;
             font-size: 1.2em;
             pointer-events: none;
+            top:50%;
+            transform:translateY(-50%);
         }
 
         .search-bar:focus {
@@ -125,8 +127,6 @@
 
         .community-list {
             margin-top: 20px;
-            max-height:350px;
-            overflow-y:scroll;
         }
         .community-list h3 {
             font-size: 1.2em;
@@ -577,6 +577,62 @@
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
+        .community-list-container
+        {
+            height:270px;
+            overflow-y:scroll;
+        }
+        .profile-card {
+            position: absolute;
+            right: 0;
+            top: 60px;
+            width: 200px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #dfe1e5;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 10;
+        }
+
+        .profile-card a {
+            display: block;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: #1a1a1b;
+            font-weight: bold;
+        }
+
+        .profile-card .logout-link {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-card .logout-link i {
+            margin-right: 8px;
+        }
+
+        .profile-card .close-icon {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #avatar:hover + #profileCard {
+            display: block;
+        }
+
+        #closeProfileCard:hover {
+            color: #555;
+        }
+
+        .user-avatar {
+            cursor: pointer;
+        }
+
 
     </style>
 </head>
@@ -587,14 +643,18 @@
         <span class="site-name">Reddit</span>
     </div>
     <div class="navbar-center">
-        <div class="search-bar-container">
-            <input type="text" class="search-bar" placeholder="Search Reddit">
-            <i class="fas fa-search search-icon"></i>
-        </div>
+        <form th:action="@{/}" method="GET">
+            <div class="search-bar-container">
+                <input type="text" name="search" class="search-bar" placeholder="Search Reddit" required>
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search search-icon"></i>
+                </button>
+            </div>
+        </form>
     </div>
     <div class="navbar-right">
         <div sec:authorize="isAuthenticated()">
-            <a href="/posts/new" class="create-post-link" >
+            <a href="/posts/new" class="create-post-link">
                 <button id="createPostBtn">
                     <div class="icon-circle" style="margin-right:3px;">
                         <i class="fas fa-plus"></i>
@@ -612,25 +672,35 @@
                 </button>
             </a>
         </div>
-    <div sec:authorize="isAuthenticated()" style="display:flex;align-items:center;justify-content:center">
-        <img th:src="${user.avatar}" alt="User Avatar" class="user-avatar" style="height: 50px; width: 50px; border-radius: 50%;object-fit: cover;">
-        <span class="user-name" style="margin-left: 10px; font-size: 15px; color: #333;">
-        <span th:text="${user.username}">Username</span>
-    </span>
-    </div>
+        <div sec:authorize="isAuthenticated()" style="display:flex;align-items:center;justify-content:center; position: relative;">
+            <img th:src="${user.avatar}" alt="User Avatar" class="user-avatar" id="avatar" style="height: 50px; width: 50px; border-radius: 50%;object-fit: cover;">
+            <span class="user-name" style="margin-left: 10px; font-size: 15px; color: #333;">
+                <span th:text="${user.username}">Username</span>
+            </span>
+
+            <div id="profileCard" class="profile-card">
+                <div class="close-icon" id="closeProfileCard">&times;</div>
+                <a href="/user/profile" class="profile-link">My Profile</a>
+                <a href="/logout" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
     </div>
 </nav>
 <div class="sidebar">
     <div class="left-div">
-        <a href="/feed/all" class="sidebar-link">
-            <button><i class="fas fa-home"></i> My Posts</button>
-        </a>
-        <a href="/feed/popular" class="sidebar-link">
-            <button><i class="fas fa-star"></i> Popular</button>
-        </a>
-        <a href="/feed/all" class="sidebar-link">
+        <a href="/" class="sidebar-link">
             <button><i class="fas fa-globe"></i> All</button>
         </a>
+        <a th:href="@{/(userPost = true)}" class="sidebar-link" sec:authorize="isAuthenticated()">
+            <button><i class="fas fa-home"></i> My Posts</button>
+        </a>
+        <a href="/" th:href="@{/(sort='top')}" class="sidebar-link">
+            <button><i class="fas fa-star"></i> Popular</button>
+        </a>
+
+
     </div>
     <div class="community-list">
         <h3>Communities</h3>
@@ -638,10 +708,11 @@
         <button id="myBtn">
             <i class="fas fa-plus"></i> Create Community
         </button>
-        <ul>
+        <ul class="community-list-container">
             <li th:each="subReddit : ${subReddits}" class="particular-avatar">
-                <img th:src="${subReddit.avatar}" alt="Avatar" style="width:50%;height: 50px; width: 50px; border-radius: 50%;;object-fit: cover;"/>
-                <span th:text="${subReddit.name}" style="width:50%;">Community Name</span>
+                <img th:src="${subReddit.avatar}" alt="Avatar" class="community-avatar"
+                     style=" height: 50px; border-radius: 50%; object-fit: cover;" />
+                <a th:href="@{/ (subRedditName=${subReddit.name})}" th:text="${subReddit.name}" style="width:50%; text-decoration: none;">Community Name</a>
             </li>
         </ul>
     </div>
@@ -689,13 +760,13 @@
         <div th:if="${!#lists.isEmpty(posts)}">
             <div th:each="post : ${posts}" class="post-card">
                 <div class="post-banner">
-                    <img th:src="${post.subReddit.avatar}" alt="Subreddit Avatar" class="avatar" />
+                    <img th:src="${post.subReddit.avatar}" alt="Subreddit Avatar" class="avatar"/>
                     <div class="subreddit-details">
                         <h3 th:text="${post.subReddit.name}">Subreddit Name</h3>
                         <h6 th:text="${post.relativeTime}">Relative Time</h6>
                     </div>
                     <div class="user-details">
-                        <img th:src="${post.user.avatar}" alt="User Avatar" class="user-avatar" />
+                        <img th:src="${post.user.avatar}" alt="User Avatar" class="user-avatar"/>
                         <span th:text="${post.user.username}">Username</span>
                     </div>
                 </div>
@@ -710,7 +781,8 @@
                     <div class="vote-buttons">
 
                         <form sec:authorize="isAuthenticated()"
-                              th:action="@{/posts/{postId}/voteDecider(postId=${post.postId}, voteType='up')}" method="post" style="display: inline;">
+                              th:action="@{/posts/{postId}/voteDecider(postId=${post.postId}, voteType='up')}"
+                              method="post" style="display: inline;">
                             <button type="submit" style="background: none; border: none;">
                                 <i class="fas fa-caret-up upvote"
                                    th:classappend="${post.userUpvoted} ? 'orange' : ''" title="Upvote"></i>
@@ -727,7 +799,8 @@
                         <span class="vote-count" th:text="${post.totalVotes}">0</span>
 
                         <form sec:authorize="isAuthenticated()"
-                              th:action="@{/posts/{postId}/voteDecider(postId=${post.postId}, voteType='down')}" method="post" style="display: inline;">
+                              th:action="@{/posts/{postId}/voteDecider(postId=${post.postId}, voteType='down')}"
+                              method="post" style="display: inline;">
                             <button type="submit" style="background: none; border: none;">
                                 <i class="fas fa-caret-down downvote"
                                    th:classappend="${post.userDownvoted} ? 'blue' : ''" title="Downvote"></i>
@@ -742,10 +815,6 @@
                         </form>
 
                     </div>
-
-
-
-
 
                     <a th:href="@{/posts/{id}(id=${post.postId})}" class="view-post">View Post</a>
                     <a th:href="@{/posts/{id}(id=${post.postId})}" class="view-comment">
@@ -762,10 +831,13 @@
         <span class="close">&times;</span>
         <h3 style="color:#81dcbc;text-align:center;">Create a Community</h3>
         <p>Build and grow a community about something you care about. We'll help you set things up.</p>
-        <form id="newSubRedditForm" th:object="${subReddit}" action="/sub/new" method="post" onsubmit="return validateSubRedditName()">
-            <input type="text" id="newSubRedditName" name="newSubRedditName" th:field="*{name}" placeholder="Subreddit Name"
+        <form id="newSubRedditForm" th:object="${subReddit}" action="/sub/new" method="post"
+              onsubmit="return validateSubRedditName()">
+            <input type="text" id="newSubRedditName" name="newSubRedditName" th:field="*{name}"
+                   placeholder="Subreddit Name"
                    class="new-subreddit-name-input" minlength="3" maxlength="30" required><br><br>
-            <textarea th:field="*{description}" id="newSubRedditDescription" name="newSubRedditDescription" placeholder="Community Description"
+            <textarea th:field="*{description}" id="newSubRedditDescription" name="newSubRedditDescription"
+                      placeholder="Community Description"
                       class="new-subreddit-description-input" rows="4" maxlength="500"></textarea><br><br>
             <p><span id="subredditNameError" style="color: red;"></span></p>
             <strong>Some Rules for making a new community</strong>
@@ -812,6 +884,21 @@
     }
 
     /*]]>*/
+    document.getElementById("avatar").addEventListener("click", function() {
+        document.getElementById("profileCard").style.display = "block";
+    });
+
+    document.getElementById("closeProfileCard").addEventListener("click", function() {
+        document.getElementById("profileCard").style.display = "none";
+    });
+
+
+    window.addEventListener("click", function(e) {
+        if (!document.getElementById("profileCard").contains(e.target) &&
+        !document.getElementById("avatar").contains(e.target)) {
+            document.getElementById("profileCard").style.display = "none";
+        }
+    });
 
 </script>
 </body>

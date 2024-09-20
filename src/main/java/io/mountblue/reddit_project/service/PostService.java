@@ -58,4 +58,11 @@ public class PostService {
 
         return posts;
     }
+    public List<Post> fetchAllPostBySearch(String searchParam) {
+        return postRepository.getAllPostsByRequirement(searchParam);
+    }
+
+    public List<Post> fetchAllPostBySubReddit(String subRedditName){
+        return postRepository.getAllPostBySubReddit(subRedditName);
+    }
 }

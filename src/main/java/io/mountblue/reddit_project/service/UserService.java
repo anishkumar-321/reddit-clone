@@ -42,12 +42,19 @@ public class UserService {
 
         userRepository.save(user);
     }
-
+    public void updateUser(User user)
+    {
+        userRepository.save(user);
+    }
     public User getUserById(Long userId) {
       return userRepository.getReferenceById(userId);
     }
 
     public User getUserByUsername(String name) {
         return userRepository.getUserByUsername(name);
+    }
+    public void deleteUser(Long id)
+    {
+        userRepository.deleteById(id);
     }
 }
