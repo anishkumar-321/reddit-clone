@@ -80,25 +80,26 @@ public class ViewController {
         model.addAttribute("subReddit", new SubReddit());
         List<Post> posts = postService.getAllPosts();
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            User user = (User) authentication.getPrincipal();
+            model.addAttribute("user", user);
+        }
         List<Post> postsWithDetails = posts.stream().map(post -> {
             post.setRelativeTime(subRedditService.calculateRelativeTime(post.getCreatedAt()));
             post.setTotalVotes(post.getTotalVotes());
 
-            // Check if user is authenticated and has voted on this post
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
                 User user = (User) authentication.getPrincipal();
                 Vote vote = voteService.getVoteByPostAndUserId(post.getPostId(), user.getId());
 
                 if (vote != null) {
-                    // If vote exists, set the vote type (1 for upvote, 0 for downvote)
                     if (vote.getVoteType() == 1) {
                         post.setUserUpvoted(true);
                     } else if (vote.getVoteType() == 0) {
                         post.setUserDownvoted(true);
                     }
                 }
-                model.addAttribute("user", user);
             }
             return post;
         }).collect(Collectors.toList());
