@@ -5,16 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Post</title>
   <style>
+    *
+    {
+    box-sizing:border-box;
+    }
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f9;
       margin: 0;
       padding: 0;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .container {
-      max-width: 600px;
-      margin: 50px auto;
+      width: 400px;
+      margin: 60px auto;
       padding: 20px;
       background-color: #fff;
       border-radius: 8px;
@@ -119,10 +127,59 @@
     .dropdown-options div:hover {
       background-color: #f4f4f4;
     }
+    .navbar {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             background-color: white;
+             border-bottom:0.5px solid lightgray;
+             color: white;
+             padding: 10px 20px;
+             height: 50px;
+             width: 100%;
+             position: fixed;
+             top: 0;
+             left: 0;
+             z-index: 1000;
+         }
 
+         .navbar-left, .navbar-right {
+             display: flex;
+             align-items: center;
+         }
+
+         .logo {
+             width: 150px;
+             height: auto;
+         }
+
+         .site-name {
+             font-size: 1.5em;
+             margin-right: 20px;
+         }
+        input[type="submit"] {
+          background-color: #FF4500;
+          color: #fff;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 4px;
+          font-size: 16px;
+          cursor: pointer;
+          width: 100%;
+          transition: background-color 0.3s ease;
+      }
+
+      input[type="submit"]:hover {
+          background-color: #FF5722;;
+      }
   </style>
 </head>
 <body>
+<nav class="navbar">
+  <div class="navbar-left">
+    <img src="/logo/reddit.png" alt="Logo" class="logo">
+  </div>
+</nav>
 <div class="container">
   <h2>Create New Post</h2>
 
@@ -155,7 +212,7 @@
       <input type="file" id="image" name="image" class="file-input" />
     </div>
 
-    <button type="submit" class="btn-primary">Submit</button>
+    <input type="submit" value="Submit" />
   </form>
 </div>
 
