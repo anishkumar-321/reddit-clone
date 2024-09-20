@@ -14,6 +14,7 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
+
     public void saveCreatePost(Post post){
         postRepository.save(post);
     }

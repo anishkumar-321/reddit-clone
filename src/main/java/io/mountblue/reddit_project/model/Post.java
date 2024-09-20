@@ -26,6 +26,45 @@ public class Post {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name="up_vote")
+    private int upVote;
+
+    @Column(name="down_vote")
+    private int downVote;
+
+    public boolean isUserUpvoted() {
+        return userUpvoted;
+    }
+
+    public void setUserUpvoted(boolean userUpvoted) {
+        this.userUpvoted = userUpvoted;
+    }
+
+    @Transient
+    private boolean userUpvoted;
+
+    public boolean isUserDownvoted() {
+        return userDownvoted;
+    }
+
+    public void setUserDownvoted(boolean userDownvoted) {
+        this.userDownvoted = userDownvoted;
+    }
+
+    @Transient
+    private boolean userDownvoted;
+
+    public int getTotalVotes() {
+        return totalVotes;
+    }
+
+    public void setTotalVotes(int totalVotes) {
+        this.totalVotes = totalVotes;
+    }
+
+    @Column(name="total_votes",nullable = false)
+    private int totalVotes=0;
+
     @ManyToOne
     @JoinColumn(name = "subreddit_id")
     private SubReddit subReddit;
@@ -51,6 +90,17 @@ public class Post {
     @ManyToOne
     @JoinColumn(name="author")
     private User user;
+
+    @OneToMany(mappedBy="post",cascade=CascadeType.ALL)
+     private List<Vote>votes;
+
+    public List<Vote> getVotes(){
+        return votes;
+    }
+
+    public void setVotes(List<Vote>votes){
+        this.votes=votes;
+    }
 
     public List<Comment> getComments() {
         return comments;

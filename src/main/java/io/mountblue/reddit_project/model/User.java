@@ -36,6 +36,9 @@ public class User implements UserDetails {
     @Column(length = 2000,name="user_info")
     private String userInfo;
 
+    @OneToMany(mappedBy="user",cascade=CascadeType.ALL)
+     private List<Vote>votes;
+
     public Long getId() {
         return id;
     }

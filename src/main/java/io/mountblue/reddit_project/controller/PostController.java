@@ -6,6 +6,8 @@ import io.mountblue.reddit_project.model.SubReddit;
 import io.mountblue.reddit_project.model.User;
 import io.mountblue.reddit_project.service.PostService;
 import io.mountblue.reddit_project.service.SubRedditService;
+import io.mountblue.reddit_project.service.UserService;
+import io.mountblue.reddit_project.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,11 +32,15 @@ import java.util.stream.Collectors;
 public class PostController {
     private final PostService postService;
     private final SubRedditService subRedditService;
+    private final VoteService voteService;
+    private final UserService userService;
 
     @Autowired
-    public PostController(PostService postService, SubRedditService subRedditService) {
+    public PostController(PostService postService, SubRedditService subRedditService, VoteService voteService, UserService userService) {
         this.postService = postService;
         this.subRedditService = subRedditService;
+        this.voteService = voteService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")
@@ -57,6 +64,14 @@ public class PostController {
         Post post = postService.getPostById(id);
         postService.saveUpdatedPost(post,title,body);
         return "redirect:/posts/"+id;
+    }
+
+    @PostMapping("/{postId}/voteDecider")
+    public String voteDecider(@PathVariable Long postId, @RequestParam("voteType") String voteType, Principal principal){
+        String username= principal.getName();
+        Long userId= userService.getIdByUserName(username);
+        voteService.voteDecider(postId,userId,voteType);
+        return "redirect:/";
     }
 
     @GetMapping("/{id}/deletePost")
