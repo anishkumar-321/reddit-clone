@@ -6,53 +6,49 @@ import jakarta.persistence.*;
 public class VoteComment {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
-      private User user;
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
     @ManyToOne
-    @JoinColumn(name="comment_id")
+    @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    public void setUser(User user){
-            this.user=user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public User getUser(){
-            return user;
-      }
+    public User getUser() {
+        return user;
+    }
 
-      public void setComment(Comment comment){
-        this.comment=comment;
-      }
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
 
-      public Comment getComment(){
+    public Comment getComment() {
         return comment;
-      }
+    }
 
     private int voteType;
 
-    public int getVoteType(){
+    public int getVoteType() {
         return voteType;
     }
 
-    public void setVoteType(int voteType){
-        this.voteType=voteType;
+    public void setVoteType(int voteType) {
+        this.voteType = voteType;
     }
 
-
-
-
-    public void setId(Long id){
-        this.id=id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
-
 }

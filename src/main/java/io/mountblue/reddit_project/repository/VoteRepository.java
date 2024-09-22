@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VoteRepository extends JpaRepository<Vote,Long> {
+public interface VoteRepository extends JpaRepository<Vote, Long> {
 
     @Modifying
     @Transactional

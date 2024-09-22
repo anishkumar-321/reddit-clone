@@ -8,19 +8,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class VoteCommentService {
 
-   private final VoteCommentRepository voteCommentRepository;
+    private final VoteCommentRepository voteCommentRepository;
 
-   @Autowired
+    @Autowired
     public VoteCommentService(VoteCommentRepository voteCommentRepository) {
         this.voteCommentRepository = voteCommentRepository;
     }
 
-    public  VoteComment getVoteCommentByCommentIdAndUserId(Long commentId, Long userId){
-                VoteComment voteComment = voteCommentRepository.getVoteCommentByCommentIdAndUserId(commentId,userId);
-                return voteComment;
+    public VoteComment getVoteCommentByCommentIdAndUserId(Long commentId, Long userId) {
+        VoteComment voteComment = voteCommentRepository.getVoteCommentByCommentIdAndUserId(commentId, userId);
+        return voteComment;
     }
 
     public void deleteCommentVoteByCommentIdAndUserId(Long commentId, Long userId) {
-      voteCommentRepository.deleteCommentVoteByCommentIdAndUserId(commentId,userId);
-   }
+        voteCommentRepository.deleteCommentVoteByCommentIdAndUserId(commentId, userId);
+    }
 }

@@ -5,17 +5,40 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class SubReddit {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subRedditId;
 
     private String name;
 
 
     private String description;
+
+
+    private LocalDateTime createdAt;
+    private String avatar;
+
+    @OneToMany(mappedBy = "subReddit", cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "subReddit", cascade = CascadeType.ALL)
+    private Set<Flair> flairs;
+
+    public Set<Flair> getFlairs() {
+        return flairs;
+    }
+
+    public void setFlairs(Set<Flair> flairs) {
+        this.flairs = flairs;
+    }
 
     public String getAvatar() {
         return avatar;
@@ -24,15 +47,14 @@ public class SubReddit {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
-    private LocalDateTime createdAt;
-    private String avatar;
 
-    @OneToMany(mappedBy = "subReddit", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+    public User getUser() {
+        return user;
+    }
 
-    @ManyToOne
-    @JoinColumn(name="admin")
-    private User user;
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getSubRedditId() {
         return subRedditId;

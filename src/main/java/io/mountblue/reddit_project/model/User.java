@@ -11,17 +11,33 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name="reddit_user")
+@Table(name = "reddit_user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-     @OneToMany(mappedBy="user")
-     List<VoteComment>voteComments;
+    public List<VoteComment> getVoteComments() {
+        return voteComments;
+    }
 
-    @Column(nullable = false,unique = true)
+    public void setVoteComments(List<VoteComment> voteComments) {
+        this.voteComments = voteComments;
+    }
+
+    public List<SubReddit> getSubReddit() {
+        return subReddit;
+    }
+
+    public void setSubReddit(List<SubReddit> subReddit) {
+        this.subReddit = subReddit;
+    }
+
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @OneToMany(mappedBy = "user")
+    List<VoteComment> voteComments;
 
     public List<Vote> getVotes() {
         return votes;
@@ -39,28 +55,29 @@ public class User implements UserDetails {
         this.posts = posts;
     }
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String password;
-
     private int age;
-
     private String gender;
 
-    @Column(name="created_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     private String avatar;
 
-    @Column(length = 2000,name="user_info")
+    @Column(length = 2000, name = "user_info")
     private String userInfo;
 
-    @OneToMany(mappedBy="user",cascade=CascadeType.ALL)
-     private List<Vote>votes;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Vote> votes;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubReddit> subReddit;
 
     public Long getId() {
         return id;
@@ -159,5 +176,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

@@ -100,7 +100,7 @@
         <img src="/logo/reddit.png" alt="Logo" class="logo">
         Update
     </h2>
-    <form th:action="@{/posts/{id}/updatePost(id=${post.postId})}" method="post">
+    <form th:action="@{/posts/{id}/updatePost(id=${post.postId})}" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" id="title" name="title" class="form-control"
@@ -111,8 +111,13 @@
             <textarea id="content" name="body" class="form-control" rows="5" required
                       th:text="${post.body}"></textarea>
         </div>
+        <div class="form-group">
+            <label for="image">Image</label>
+            <input id="image" name="image" type="file" class="form-control"/>
+        </div>
         <button type="submit" class="btn">
-            <img src="/logo/reddit.png" alt="Logo" style="width: 20px; height: auto; vertical-align: middle; margin-right: 5px;">
+            <img src="/logo/reddit.png" alt="Logo"
+                 style="width: 20px; height: auto; vertical-align: middle; margin-right: 5px;">
             Update Post
         </button>
     </form>

@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select Distinct u.email from User u")
     Set<String> emailSet();
 
@@ -19,11 +19,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByUsername(String username);
 
-//    @Query("SELECT u.id FROM User u WHERE u.username = :username")
-  //  Long getIdByUserName(@Param("username") String username);
-
     @Query("select u.id from User u where u.username=:username")
-    Long getIdByUserName(@Param("username")String username);
+    Long getIdByUserName(@Param("username") String username);
 
 
     @Query("SELECT u FROM User u WHERE u.username = :username")

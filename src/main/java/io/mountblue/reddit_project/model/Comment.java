@@ -8,14 +8,40 @@ import java.util.List;
 
 @Entity
 public class Comment {
-
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String comment;
     private String email;
     private int totalVotesForComments;
+    private boolean userUpvoted;
+    private boolean userDownvoted;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteComment> voteComments;
+
+    public int getTotalVotesForComments() {
+        return totalVotesForComments;
+    }
+
+    public void setTotalVotesForComments(int totalVotesForComments) {
+        this.totalVotesForComments = totalVotesForComments;
+    }
+
+    public List<VoteComment> getVoteComments() {
+        return voteComments;
+    }
+
+    public void setVoteComments(List<VoteComment> voteComments) {
+        this.voteComments = voteComments;
+    }
 
     public boolean isUserUpvoted() {
         return userUpvoted;
@@ -25,8 +51,6 @@ public class Comment {
         this.userUpvoted = userUpvoted;
     }
 
-    private boolean userUpvoted;
-
     public boolean isUserDownvoted() {
         return userDownvoted;
     }
@@ -35,32 +59,12 @@ public class Comment {
         this.userDownvoted = userDownvoted;
     }
 
-    private boolean userDownvoted;
-
-
-
-    public int getTotalVotesForComments(){
-        return totalVotesForComments;
-    }
-
-    public void setTotalVotesForComments(int totalVotesComments){
-        this.totalVotesForComments=totalVotesComments;
-    }
-
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="post_id")
-    private Post post;
-
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy="comment" ,cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VoteComment>voteComments;
-
-    public Post getPost(){
+    public Post getPost() {
         return post;
     }
 
-    public void setPost(Post post){
-        this.post=post;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public String getName() {
@@ -86,7 +90,6 @@ public class Comment {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     public String getComment() {
         return comment;

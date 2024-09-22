@@ -320,6 +320,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor:pointer;
         }
 
         .user-avatar {
@@ -632,8 +633,111 @@
         .user-avatar {
             cursor: pointer;
         }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .right-sidebar {
+            position: fixed;
+            padding-top:20px;
+            top: 55px;
+            right: 0;
+            height: 100%;
+            width: 0;
+            background-color: white;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            z-index: 999;
+        }
 
+        .community-list-container {
+            list-style-type: none;
+            padding: 0;
+        }
 
+        .community-list-container li {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .community-link {
+            text-decoration: none;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        .community-link:hover {
+            color: #0079d3;
+        }
+
+        .sidebar-avatar {
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .close-btn {
+            background-color: transparent;
+            border: none;
+            font-size: 50px;
+            cursor: pointer;
+            color: #333; /* Close button color */
+        }
+
+        /* Additional styles for the rest of the sidebar */
+        #subredditName {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        #subredditDescription {
+            margin: 10px 0;
+        }
+
+        /* For rules section */
+        .subreddit-rules {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .subreddit-rules li {
+            margin: 10px 0;
+        }
+        .view-posts-button {
+            margin-top: 10px;
+            width: 80%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .view-posts-button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        .flairsString
+        {
+            margin-top:5px;
+            margin-bottom:15px;
+            display:flex;
+            flex-direction:column;
+        }
+        .flairsString input
+        {
+            margin-top:5px;
+            height:40px;
+            border-radius:4px;
+            border:1px solid #ccc;
+            padding:0 10px;
+            font-size: 1em;
+        }
     </style>
 </head>
 <body>
@@ -653,15 +757,27 @@
         </form>
     </div>
     <div class="navbar-right">
+        <!--        <div sec:authorize="isAuthenticated()">-->
+        <!--            <a href="/posts/new" class="create-post-link">-->
+        <!--                <button id="createPostBtn">-->
+        <!--                    <div class="icon-circle" style="margin-right:3px;">-->
+        <!--                        <i class="fas fa-plus"></i>-->
+        <!--                    </div>-->
+        <!--                    Create Post-->
+        <!--                </button>-->
+        <!--            </a>-->
+        <!--        </div>-->
         <div sec:authorize="isAuthenticated()">
-            <a href="/posts/new" class="create-post-link">
-                <button id="createPostBtn">
-                    <div class="icon-circle" style="margin-right:3px;">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    Create Post
-                </button>
-            </a>
+            <div th:if="${subReddits != null and !subReddits.isEmpty()}">
+                <a href="/posts/new" class="create-post-link">
+                    <button id="createPostBtn">
+                        <div class="icon-circle" style="margin-right:3px;">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        Create Post
+                    </button>
+                </a>
+            </div>
         </div>
 
 
@@ -672,9 +788,11 @@
                 </button>
             </a>
         </div>
-        <div sec:authorize="isAuthenticated()" style="display:flex;align-items:center;justify-content:center; position: relative;">
-            <img th:src="${user.avatar}" alt="User Avatar" class="user-avatar" id="avatar" style="height: 50px; width: 50px; border-radius: 50%;object-fit: cover;">
-            <span class="user-name" style="margin-left: 10px; font-size: 15px; color: #333;">
+        <div sec:authorize="isAuthenticated()"
+             style="display:flex;align-items:center;justify-content:center; position: relative;">
+            <img th:src="${user.avatar}" alt="User Avatar" class="user-avatar" id="avatar"
+                 style="height: 50px; width: 50px; border-radius: 50%;object-fit: cover;">
+            <span class="user-name" style="margin-left: 10px; font-size: 15px; color: #333;cursor:pointer">
                 <span th:text="${user.username}">Username</span>
             </span>
 
@@ -705,14 +823,20 @@
     <div class="community-list">
         <h3>Communities</h3>
         <hr>
-        <button id="myBtn">
-            <i class="fas fa-plus"></i> Create Community
-        </button>
+        <div sec:authorize="isAuthenticated()">
+            <button id="myBtn">
+                <i class="fas fa-plus"></i> Create Community
+            </button>
+        </div>
+
         <ul class="community-list-container">
             <li th:each="subReddit : ${subReddits}" class="particular-avatar">
                 <img th:src="${subReddit.avatar}" alt="Avatar" class="community-avatar"
-                     style=" height: 50px; border-radius: 50%; object-fit: cover;" />
-                <a th:href="@{/ (subRedditName=${subReddit.name})}" th:text="${subReddit.name}" style="width:50%; text-decoration: none;">Community Name</a>
+                     style="height: 50px; border-radius: 50%; object-fit: cover;"/>
+                <a href="#" class="community-link" th:data-name="${subReddit.name}" th:data-avatar="${subReddit.avatar}"
+                   th:data-description="${subReddit.description}">
+                    <span th:text="${subReddit.name}">Community Name</span>
+                </a>
             </li>
         </ul>
     </div>
@@ -760,18 +884,21 @@
         <div th:if="${!#lists.isEmpty(posts)}">
             <div th:each="post : ${posts}" class="post-card">
                 <div class="post-banner">
-                    <img th:src="${post.subReddit.avatar}" alt="Subreddit Avatar" class="avatar"/>
+                    <a th:href="@{/(subRedditName=${post.subReddit.name})}">
+                        <img th:src="${post.subReddit.avatar}" alt="Subreddit Avatar" class="avatar"/>
+                    </a>
                     <div class="subreddit-details">
                         <h3 th:text="${post.subReddit.name}">Subreddit Name</h3>
                         <h6 th:text="${post.relativeTime}">Relative Time</h6>
                     </div>
-                    <div class="user-details">
-                        <img th:src="${post.user.avatar}" alt="User Avatar" class="user-avatar"/>
-                        <span th:text="${post.user.username}">Username</span>
-                    </div>
+                    <a th:href="@{/user/profile}">
+                        <div class="user-details">
+                            <img th:src="${post.user.avatar}" alt="User Avatar" class="user-avatar"/>
+                            <span th:text="${post.user.username}">Username</span>
+                        </div>
+                    </a>
                 </div>
                 <h3 th:text="${post.title}">Post Title</h3>
-                <p><strong>Subreddit:</strong> <span th:text="${post.subReddit.name}">Subreddit Name</span></p>
                 <div class="post-image">
                     <img th:if="${post.image != null}"
                          th:src="@{/posts/{id}/image(id=${post.postId})}"
@@ -840,8 +967,13 @@
                       placeholder="Community Description"
                       class="new-subreddit-description-input" rows="4" maxlength="500"></textarea><br><br>
             <p><span id="subredditNameError" style="color: red;"></span></p>
+
+            <div class="flairsString">
+                <label for="flairsString">Enter Flairs</label>
+                <input type="text" placeholder="Enter flairs(comma Seperated)" id="flairsString" name="flairsString"/>
+            </div>
             <strong>Some Rules for making a new community</strong>
-            <ul>
+            <ul style="padding-left:15px;margin-bottom:15px;margin-top:15px;">
                 <li>SubReddit Name must be unique</li>
                 <li>SubReddit Name must only have alphabets</li>
                 <li>Name should give some idea on what subreddit is about</li>
@@ -852,6 +984,30 @@
             <br><br>
         </form>
     </div>
+</div>
+<div id="communitySidebar" class="right-sidebar">
+    <button class="close-btn" id="closeSidebar">&times;</button>
+    <img id="subredditAvatar" alt="Subreddit Avatar" class="sidebar-avatar"
+         style="height: 50px; width: 50px; border-radius: 50%;object-fit: cover;"/>
+    <h3 id="subredditName">Community Name</h3>
+    <p id="subredditDescription">Community Description</p>
+    <h4>Rules</h4>
+    <ul class="subreddit-rules">
+        <li>Rule 1: <strong>Be respectful</strong></li>
+        <li>Rule 2:<strong>No spam or self-promotion</strong></li>
+        <li>Rule 3: <strong>No hate speech</strong></li>
+        <li>Rule 4:<strong> Keep it relevant</strong></li>
+        <li>Rule 5: <strong>No illegal content</strong></li>
+        <li>Rule 6:<strong> No NSFW content</strong></li>
+        <li>Rule 7:<strong>No personal attacks</strong></li>
+        <li>Rule 8: <strong>Follow Reddiquette</strong></li>
+        <li>Rule 9: <strong>No excessive self-promotion</strong></li>
+        <li>Rule 10: <strong>Use appropriate flair</strong></li>
+    </ul>
+    <div style="display:flex;align-items:center;justify-content:center">
+        <a id="viewPostsLink" href="#" class="view-posts-button">View Community Posts</a>
+    </div>
+
 </div>
 <script th:inline="javascript">
     var modal = document.getElementById("myModal");
@@ -884,22 +1040,72 @@
     }
 
     /*]]>*/
-    document.getElementById("avatar").addEventListener("click", function() {
-        document.getElementById("profileCard").style.display = "block";
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const closeSidebarButton = document.getElementById('closeSidebar');
+        const communitySidebar = document.getElementById('communitySidebar');
+
+        if (closeSidebarButton) {
+            closeSidebarButton.addEventListener('click', function() {
+                communitySidebar.style.width = '0';
+            });
+        } else {
+            console.error("Close sidebar button not found!");
+        }
+
+        document.querySelectorAll('.community-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const avatar = this.getAttribute('data-avatar');
+                const name = this.getAttribute('data-name');
+                const description = this.getAttribute('data-description');
+
+                document.getElementById('subredditAvatar').src = avatar;
+                document.getElementById('subredditName').textContent = name;
+                document.getElementById('subredditDescription').textContent = description;
+
+                const viewPostsLink = document.getElementById('viewPostsLink');
+                viewPostsLink.setAttribute('href', `/?subRedditName=${name}`);
+
+                communitySidebar.style.width = '250px';
+            });
+        });
     });
 
-    document.getElementById("closeProfileCard").addEventListener("click", function() {
-        document.getElementById("profileCard").style.display = "none";
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const avatar = document.getElementById("avatar");
+        const userName = document.querySelector(".user-name");
+        const profileCard = document.getElementById("profileCard");
 
+        if (avatar) {
+            avatar.addEventListener("click", function() {
+                toggleProfileCard();
+            });
+        }
 
-    window.addEventListener("click", function(e) {
-        if (!document.getElementById("profileCard").contains(e.target) &&
-        !document.getElementById("avatar").contains(e.target)) {
-            document.getElementById("profileCard").style.display = "none";
+        if (userName) {
+            userName.addEventListener("click", function() {
+                toggleProfileCard();
+            });
+        }
+
+        window.addEventListener("click", function(e) {
+            if (profileCard && !profileCard.contains(e.target) && !avatar.contains(e.target) && !userName.contains(e.target)) {
+                profileCard.style.display = "none";
+            }
+        });
+
+        function toggleProfileCard() {
+            if (profileCard) {
+                if (profileCard.style.display === "none" || profileCard.style.display === "") {
+                    profileCard.style.display = "block";
+                } else {
+                    profileCard.style.display = "none";
+                }
+            }
         }
     });
-
 </script>
 </body>
 </html>

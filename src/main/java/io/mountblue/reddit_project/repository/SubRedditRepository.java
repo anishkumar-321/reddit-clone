@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SubRedditRepository extends JpaRepository<SubReddit,Long> {
+public interface SubRedditRepository extends JpaRepository<SubReddit, Long> {
     @Query("select distinct name from SubReddit ")
     List<String> findAllByName();
 

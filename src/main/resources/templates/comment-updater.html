@@ -97,16 +97,6 @@
 
     <form th:action="@{/comments/{commentId}/updateComment(commentId=${comment.id})}" th:object="${comment}" method="post">
         <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name" th:value="${comment.name}" required>
-        </div>
-
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" th:value="${comment.email}" required>
-        </div>
-
-        <div class="form-group">
             <label for="comment">Comment</label>
             <textarea class="form-control" id="comment" name="comment" required th:text="${comment.comment}"></textarea>
         </div>
