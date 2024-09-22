@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Edit User</title>
@@ -95,24 +95,25 @@
 </nav>
 <div class="form-container">
 
-    <h3>Edit Profile</h3><form th:action="@{/user/profile/update}" method="post" th:object="${user}">
-    <label for="username">Username</label>
-    <input type="text" id="username" th:field="*{username}" required>
+    <h3>Edit Profile</h3>
+    <form th:action="@{/user/profile/update}" method="post" th:object="${user}">
+        <label for="username">Username</label>
+        <input type="text" id="username" th:field="*{username}" required>
 
-    <label for="age">Age</label>
-    <input type="text" id="age" th:field="*{age}">
+        <label for="age">Age</label>
+        <input type="text" id="age" th:field="*{age}">
 
-    <label for="gender">Gender</label>
-    <select id="gender" th:field="*{gender}">
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-    </select>
+        <label for="gender">Gender</label>
+        <select id="gender" th:field="*{gender}">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
 
-    <label for="description">Description</label>
-    <input type="text" id="description" th:field="*{userInfo}">
+        <label for="description">Description</label>
+        <input type="text" id="description" th:field="*{userInfo}">
 
-    <input type="submit" value="Update Profile" />
-</form>
+        <input type="submit" value="Update Profile"/>
+    </form>
 </div>
 </body>
 </html>

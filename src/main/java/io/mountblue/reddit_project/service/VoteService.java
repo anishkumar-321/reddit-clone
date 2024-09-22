@@ -13,75 +13,69 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class VoteService {
 
-   private final VoteRepository voteRepository;
-   private final PostService postService;
+    private final VoteRepository voteRepository;
+    private final PostService postService;
     private final UserService userService;
     private final PostRepository postRepository;
 
-   @Autowired
-   public VoteService(VoteRepository voteRepository, PostService postService, UserService userService, PostRepository postRepository) {
+    @Autowired
+    public VoteService(VoteRepository voteRepository, PostService postService, UserService userService, PostRepository postRepository) {
         this.voteRepository = voteRepository;
         this.postService = postService;
         this.userService = userService;
         this.postRepository = postRepository;
-   }
+    }
 
-    public void voteDecider(Long postId,Long userId,String voteType){
+    public void voteDecider(Long postId, Long userId, String voteType) {
 
         Vote existingVote = voteRepository.getVoteByPostAndUserId(postId, userId);
         Post post = postService.getPostById(postId);
         User user = userService.getUserById(userId);
 
         if (existingVote == null) {
-            // First-time voting (no previous vote)
             Vote newVote = new Vote();
             newVote.setPost(post);
             newVote.setUser(user);
 
             if (voteType.equals("up")) {
                 newVote.setVoteType(1); // Upvote
-                post.setTotalVotes(post.getTotalVotes() + 1); // Increase totalVotes
+                post.setTotalVotes(post.getTotalVotes() + 1);
             } else if (voteType.equals("down")) {
                 newVote.setVoteType(0); // Downvote
-                post.setTotalVotes(post.getTotalVotes() - 1); // Decrease totalVotes
+                post.setTotalVotes(post.getTotalVotes() - 1);
             }
 
             voteRepository.save(newVote);
-        }
-        else {
-            // The user has already voted; update or delete the vote
+        } else {
+
             if (existingVote.getVoteType() == 1 && voteType.equals("down")) {
-                // Change from upvote to downvote
+
                 existingVote.setVoteType(0);
                 post.setTotalVotes(post.getTotalVotes() - 2);
-                voteRepository.save(existingVote);// Decrease total by 2
+                voteRepository.save(existingVote);
             } else if (existingVote.getVoteType() == 0 && voteType.equals("up")) {
-                // Change from downvote to upvote
+
                 existingVote.setVoteType(1);
                 post.setTotalVotes(post.getTotalVotes() + 2);
-                voteRepository.save(existingVote);// Increase total by 2
+                voteRepository.save(existingVote);
             } else {
-                // User clicked the same vote again (remove the vote)
                 voteRepository.delete(existingVote);
 
-                // Adjust totalVotes based on what the previous vote was
                 if (existingVote.getVoteType() == 1) {
-                    post.setTotalVotes(post.getTotalVotes() - 1); // Remove upvote
+                    post.setTotalVotes(post.getTotalVotes() - 1);
                 } else {
-                    post.setTotalVotes(post.getTotalVotes() + 1); // Remove downvote
+                    post.setTotalVotes(post.getTotalVotes() + 1);
                 }
             }
 
             postRepository.save(post);
         }
-   }
-
-
-    public Vote getVoteByPostAndUserId(Long postId, Long userId){
-        Vote VoteData=  voteRepository.getVoteByPostAndUserId(postId,userId);
-        return VoteData;
     }
 
+    public Vote getVoteByPostAndUserId(Long postId, Long userId) {
+        Vote VoteData = voteRepository.getVoteByPostAndUserId(postId, userId);
+        return VoteData;
+    }
 
 
 }

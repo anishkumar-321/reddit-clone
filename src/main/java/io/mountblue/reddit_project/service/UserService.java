@@ -11,28 +11,28 @@ import java.util.Set;
 
 @Service
 public class UserService {
-    private  final UserRepository userRepository;
-    private  final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public  UserService(UserRepository userRepository,PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Long getIdByUserName(String username){
+    public Long getIdByUserName(String username) {
         return userRepository.getIdByUserName(username);
     }
 
-    public Set<String> getEmailSet(){
+    public Set<String> getEmailSet() {
         return userRepository.emailSet();
     }
 
-    public Set<String> getUserNameSet(){
+    public Set<String> getUserNameSet() {
         return userRepository.userNameSet();
     }
 
-    public void saveNewUser(User user){
+    public void saveNewUser(User user) {
         user.setCreatedAt(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -42,19 +42,20 @@ public class UserService {
 
         userRepository.save(user);
     }
-    public void updateUser(User user)
-    {
+
+    public void updateUser(User user) {
         userRepository.save(user);
     }
+
     public User getUserById(Long userId) {
-      return userRepository.getReferenceById(userId);
+        return userRepository.getReferenceById(userId);
     }
 
     public User getUserByUsername(String name) {
         return userRepository.getUserByUsername(name);
     }
-    public void deleteUser(Long id)
-    {
+
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 }

@@ -3,7 +3,9 @@ package io.mountblue.reddit_project.service;
 import io.mountblue.reddit_project.model.Post;
 import io.mountblue.reddit_project.repository.PostRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -11,12 +13,12 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
 
-    public PostService(PostRepository postRepository){
+    public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
 
-    public void saveCreatePost(Post post){
+    public void saveCreatePost(Post post) {
         postRepository.save(post);
     }
 
@@ -29,18 +31,21 @@ public class PostService {
     }
 
 
-    public void saveUpdatedPost(Post post, String title, String body){
+    public void saveUpdatedPost(Post post, String title, String body, MultipartFile imageFile) throws IOException {
         post.setBody(body);
         post.setTitle(title);
+        if (imageFile != null && !imageFile.isEmpty()) {
+            post.setImage(imageFile.getBytes());
+        }
         postRepository.save(post);
     }
 
     public void deletePostById(Long id) {
-        postRepository.deleteById(id);
+        postRepository.deletePostById(id);
     }
+
     public List<Post> getSortedPosts(String sort) {
         List<Post> posts = getAllPosts();
-
         switch (sort) {
             case "new":
                 posts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
@@ -52,17 +57,17 @@ public class PostService {
                 posts.sort(Comparator.comparing(Post::getTotalVotes).reversed());
                 break;
             default:
-                // No sorting
                 break;
         }
 
         return posts;
     }
+
     public List<Post> fetchAllPostBySearch(String searchParam) {
         return postRepository.getAllPostsByRequirement(searchParam);
     }
 
-    public List<Post> fetchAllPostBySubReddit(String subRedditName){
+    public List<Post> fetchAllPostBySubReddit(String subRedditName) {
         return postRepository.getAllPostBySubReddit(subRedditName);
     }
 }

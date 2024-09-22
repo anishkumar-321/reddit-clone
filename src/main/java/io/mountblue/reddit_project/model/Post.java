@@ -1,6 +1,9 @@
 package io.mountblue.reddit_project.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,44 +29,23 @@ public class Post {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name="up_vote")
+    @Column(name = "up_vote")
     private int upVote;
 
-    @Column(name="down_vote")
+    @Column(name = "down_vote")
     private int downVote;
 
-    public boolean isUserUpvoted() {
-        return userUpvoted;
-    }
-
-    public void setUserUpvoted(boolean userUpvoted) {
-        this.userUpvoted = userUpvoted;
-    }
+    @OneToMany
+    private List<Flair> flairs;
 
     @Transient
     private boolean userUpvoted;
 
-    public boolean isUserDownvoted() {
-        return userDownvoted;
-    }
-
-    public void setUserDownvoted(boolean userDownvoted) {
-        this.userDownvoted = userDownvoted;
-    }
-
     @Transient
     private boolean userDownvoted;
 
-    public int getTotalVotes() {
-        return totalVotes;
-    }
-
-    public void setTotalVotes(int totalVotes) {
-        this.totalVotes = totalVotes;
-    }
-
-    @Column(name="total_votes",nullable = false)
-    private int totalVotes=0;
+    @Column(name = "total_votes", nullable = false)
+    private int totalVotes = 0;
 
     @ManyToOne
     @JoinColumn(name = "subreddit_id")
@@ -76,8 +58,17 @@ public class Post {
     @Transient
     private String relativeTime;
 
-    @OneToMany(mappedBy="post", cascade=CascadeType.ALL)
-    private List<Comment> comments= new ArrayList<>();
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "author")
+    private User user;
+
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vote> votes;
 
     public User getUser() {
         return user;
@@ -87,19 +78,12 @@ public class Post {
         this.user = user;
     }
 
-    @ManyToOne
-    @JoinColumn(name="author")
-    private User user;
-
-    @OneToMany(mappedBy="post",cascade=CascadeType.ALL)
-     private List<Vote>votes;
-
-    public List<Vote> getVotes(){
+    public List<Vote> getVotes() {
         return votes;
     }
 
-    public void setVotes(List<Vote>votes){
-        this.votes=votes;
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
     }
 
     public List<Comment> getComments() {
@@ -172,5 +156,53 @@ public class Post {
 
     public void setRelativeTime(String relativeTime) {
         this.relativeTime = relativeTime;
+    }
+
+    public int getTotalVotes() {
+        return totalVotes;
+    }
+
+    public void setTotalVotes(int totalVotes) {
+        this.totalVotes = totalVotes;
+    }
+
+    public boolean isUserDownvoted() {
+        return userDownvoted;
+    }
+
+    public void setUserDownvoted(boolean userDownvoted) {
+        this.userDownvoted = userDownvoted;
+    }
+
+    public boolean isUserUpvoted() {
+        return userUpvoted;
+    }
+
+    public void setUserUpvoted(boolean userUpvoted) {
+        this.userUpvoted = userUpvoted;
+    }
+
+    public int getDownVote() {
+        return downVote;
+    }
+
+    public void setDownVote(int downVote) {
+        this.downVote = downVote;
+    }
+
+    public int getUpVote() {
+        return upVote;
+    }
+
+    public void setUpVote(int upVote) {
+        this.upVote = upVote;
+    }
+
+    public List<Flair> getFlairs() {
+        return flairs;
+    }
+
+    public void setFlairs(List<Flair> flairs) {
+        this.flairs = flairs;
     }
 }

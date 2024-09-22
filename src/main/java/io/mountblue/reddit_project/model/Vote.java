@@ -3,15 +3,23 @@ package io.mountblue.reddit_project.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 public class Vote {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    private int voteType;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Long getId() {
         return id;
@@ -21,8 +29,6 @@ public class Vote {
         this.id = id;
     }
 
-    private int voteType;
-
     public int getVoteType() {
         return voteType;
     }
@@ -31,27 +37,19 @@ public class Vote {
         this.voteType = voteType;
     }
 
-    @ManyToOne
-    @JoinColumn(name="post_id")
-    private Post post;
-
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
-
-    public Post getPost(){
+    public Post getPost() {
         return post;
     }
 
-    public void setPost(Post post){
-        this.post=post;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public User getUser(){
+    public User getUser() {
         return user;
     }
 
-    public void setUser(User user){
-        this.user=user;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

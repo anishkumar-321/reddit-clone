@@ -13,18 +13,20 @@ import java.util.List;
 public class SubRedditService {
     private final SubRedditRepository subRedditRepository;
 
-    public SubRedditService(SubRedditRepository subRedditRepository){
+    public SubRedditService(SubRedditRepository subRedditRepository) {
         this.subRedditRepository = subRedditRepository;
     }
 
-    public void createSubReddit(SubReddit sudReddit){
+    public void createSubReddit(SubReddit sudReddit) {
         subRedditRepository.save(sudReddit);
     }
+
 
     public List<SubReddit> getAllSubReddits() {
         return subRedditRepository.findAll();
     }
-    public SubReddit getSubReddit(String subredditName){
+
+    public SubReddit getSubReddit(String subredditName) {
         return subRedditRepository.findByName(subredditName);
     }
 
