@@ -1,6 +1,10 @@
 package io.mountblue.reddit_project.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.List;
 
 @Entity
 public class Comment {
@@ -11,10 +15,45 @@ public class Comment {
     private String name;
     private String comment;
     private String email;
+    private int totalVotesForComments;
+
+    public boolean isUserUpvoted() {
+        return userUpvoted;
+    }
+
+    public void setUserUpvoted(boolean userUpvoted) {
+        this.userUpvoted = userUpvoted;
+    }
+
+    private boolean userUpvoted;
+
+    public boolean isUserDownvoted() {
+        return userDownvoted;
+    }
+
+    public void setUserDownvoted(boolean userDownvoted) {
+        this.userDownvoted = userDownvoted;
+    }
+
+    private boolean userDownvoted;
+
+
+
+    public int getTotalVotesForComments(){
+        return totalVotesForComments;
+    }
+
+    public void setTotalVotesForComments(int totalVotesComments){
+        this.totalVotesForComments=totalVotesComments;
+    }
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="post_id")
     private Post post;
+
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy="comment" ,cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteComment>voteComments;
 
     public Post getPost(){
         return post;

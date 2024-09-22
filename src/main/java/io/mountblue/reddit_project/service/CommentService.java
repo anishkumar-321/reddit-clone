@@ -1,5 +1,8 @@
 package io.mountblue.reddit_project.service;
 
+import io.mountblue.reddit_project.model.User;
+import io.mountblue.reddit_project.model.VoteComment;
+import io.mountblue.reddit_project.repository.VoteCommentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +20,16 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-
+    private final UserService userService;
+    private final VoteCommentService voteCommentService;
+    private final VoteCommentRepository voteCommentRepository;
     @Autowired
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository) {
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserService userService, VoteCommentService voteCommentService, VoteCommentRepository voteCommentRepository) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.userService = userService;
+        this.voteCommentService = voteCommentService;
+        this.voteCommentRepository = voteCommentRepository;
     }
 
     public Comment getCommentById(Long commentId){
@@ -38,6 +46,69 @@ public class CommentService {
         comment.setPost(post);
         commentRepository.save(comment);
     }
+
+    public void commentVoteDecider(Long commentId,Long userId ,String voteType){
+         VoteComment voteComment = voteCommentService.getVoteCommentByCommentIdAndUserId(commentId,userId);
+          User user = userService.getUserById(userId);
+          Comment comment = commentRepository.getReferenceById(commentId);
+         if(voteComment==null){
+              VoteComment newVoteComment= new VoteComment();
+
+              if(voteType.equals("up")) {
+                  int totalVotes= comment.getTotalVotesForComments();
+                  comment.setTotalVotesForComments(totalVotes+1);
+                  newVoteComment.setVoteType(1);
+              }
+              else if(voteType.equals("down")){
+                  int totalVotes = comment.getTotalVotesForComments();
+                  comment.setTotalVotesForComments(totalVotes-1);
+                  newVoteComment.setVoteType(0);
+              }
+              newVoteComment.setUser(user);
+              newVoteComment.setComment(comment);
+              commentRepository.save(comment);
+              voteCommentRepository.save(newVoteComment);
+         }
+
+         else{
+            int voteCommentType= voteComment.getVoteType();
+
+            if(voteCommentType==1 && voteType.equals("up")){
+                int totalVotes= comment.getTotalVotesForComments();
+                  totalVotes-=1;
+                  voteCommentService.deleteCommentVoteByCommentIdAndUserId(commentId,userId);
+                  comment.setTotalVotesForComments(totalVotes);
+            }
+
+            else if(voteCommentType==1 && voteType.equals("down")){
+                int totalVotes= comment.getTotalVotesForComments();
+                totalVotes-=2;
+                voteComment.setVoteType(0);
+                voteCommentRepository.save(voteComment);
+                comment.setTotalVotesForComments(totalVotes);
+            }
+
+            else if(voteCommentType==0 && voteType.equals("down")){
+                int totalVotes= comment.getTotalVotesForComments();
+                totalVotes+=1;
+                voteCommentService.deleteCommentVoteByCommentIdAndUserId(commentId,userId);
+                comment.setTotalVotesForComments(totalVotes);
+            }
+
+            else if(voteCommentType==0 && voteType.equals("up")){
+                int totalVotes= comment.getTotalVotesForComments();
+                totalVotes+=2;
+                voteComment.setVoteType(1);
+                voteCommentRepository.save(voteComment);
+                comment.setTotalVotesForComments(totalVotes);
+            }
+
+
+            commentRepository.save(comment);
+         }
+    }
+
+
 
     public void updateComment(Long commentId,String name , String email, String commentContent){
         Comment comment = commentRepository.getReferenceById(commentId);
