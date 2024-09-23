@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .formLogin(login -> login
                         .loginPage("/showLoginPage")
                         .loginProcessingUrl("/authenticateTheUser")
-                        .successHandler(authenticationSuccessHandler())
+                        .defaultSuccessUrl("/")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -52,17 +52,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new AuthenticationSuccessHandler() {
-            private final RequestCache requestCache = new HttpSessionRequestCache();
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                                org.springframework.security.core.Authentication authentication) throws IOException {
-                var savedRequest = requestCache.getRequest(request, response);
-                String targetUrl = savedRequest != null ? savedRequest.getRedirectUrl() : "/";
-                response.sendRedirect(targetUrl);
-            }
-        };
-    }
+
+
 }
