@@ -153,7 +153,13 @@ public class PostController {
     }
 
     @PostMapping("/createWithFlairs")
-    public String savePostWithFlairs(@RequestParam("postId") Long postId, @RequestParam("selectedFlairs") List<String> flairs, @RequestParam(value = "subReddit") String subRedditName) {
+    public String savePostWithFlairs(@RequestParam("postId") Long postId, @RequestParam(value = "selectedFlairs",required = false) List<String> flairs, @RequestParam(value = "subReddit") String subRedditName) {
+
+        if(flairs==null || flairs.isEmpty())
+        {
+            return "redirect:/";
+        }
+
         Post post = postService.getPostById(postId);
         SubReddit subReddit = subRedditService.getSubReddit(subRedditName);
         Long subRedditId = subReddit.getSubRedditId();

@@ -5,6 +5,7 @@ import io.mountblue.reddit_project.model.SubReddit;
 import io.mountblue.reddit_project.model.User;
 import io.mountblue.reddit_project.service.PostService;
 import io.mountblue.reddit_project.service.SubRedditService;
+import io.mountblue.reddit_project.service.UserService;
 import io.mountblue.reddit_project.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -27,13 +28,15 @@ public class ViewController {
     private final SubRedditService subRedditService;
     private final PostService postService;
     private final VoteService voteService;
+    private final UserService userService;
 
 
     @Autowired
-    public ViewController(SubRedditService subRedditService, PostService postService, VoteService voteService){
+    public ViewController(SubRedditService subRedditService, PostService postService, VoteService voteService, UserService userService){
         this.subRedditService = subRedditService;
         this.postService = postService;
         this.voteService = voteService;
+        this.userService = userService;
     }
 
     @GetMapping("/about-reddit")
@@ -63,7 +66,8 @@ public class ViewController {
         List<Post> posts;
         if(isUserPost)
         {
-            User user = (User) authentication.getPrincipal();
+            String userName=SecurityContextHolder.getContext().getAuthentication().getName();
+            User user=userService.getUserByUsername(userName);
             posts=user.getPosts();
         }
        else if (!subRedditName.isEmpty()) {
